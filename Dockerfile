@@ -39,6 +39,21 @@ RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s 
   && chmod +x ./kubectl \
   && mv ./kubectl /usr/local/bin/kubectl
 
+# Install protoc
+ARG PROTOC_ZIP="protoc-3.12.0-linux-x86_64.zip"
+RUN curl -OL https://github.com/protocolbuffers/protobuf/releases/download/v3.12.0/$PROTOC_ZIP
+RUN unzip -o $PROTOC_ZIP -d /usr/local bin/protoc
+RUN unzip -o $PROTOC_ZIP -d /usr/local 'include/*'
+RUN rm -f $PROTOC_ZIP
+
+ARG COMMON_PROTO_ZIP="common-protos-1_3_1.zip"
+ARG COMMON_PROTO_ZIP_PATH="googleapis-common-protos-1_3_1"
+RUN curl -OL https://github.com/googleapis/googleapis/archive/$COMMON_PROTO_ZIP
+RUN unzip -o $COMMON_PROTO_ZIP -d /usr/local/include "$COMMON_PROTO_ZIP_PATH/google/api/*"
+RUN mv /usr/local/include/$COMMON_PROTO_ZIP_PATH/google/api /usr/local/include/google/api
+RUN rm -rf /usr/local/include/$COMMON_PROTO_ZIP_PATH
+RUN rm -f $COMMON_PROTO_ZIP
+
 # Cleanup
 RUN apk del --purge deps \
   && rm /var/cache/apk/*
