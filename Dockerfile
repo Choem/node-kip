@@ -4,14 +4,14 @@ USER root
 
 # Add needed packages to build container
 RUN apk add --update ca-certificates \
-  && apk add --update -t deps \
+  && apk add --update \
   docker \
   curl \
   unzip \
   git \ 
   openssl \
   bash \
-  && apk add python3
+  python3 
 
 # Install gcloud
 RUN curl https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-278.0.0-linux-x86_64.tar.gz > /tmp/google-cloud-sdk.tar.gz
@@ -54,6 +54,6 @@ RUN mv /usr/local/include/$COMMON_PROTO_ZIP_PATH/google/api /usr/local/include/g
 RUN rm -rf /usr/local/include/$COMMON_PROTO_ZIP_PATH
 RUN rm -f $COMMON_PROTO_ZIP
 
-# Cleanup
-RUN apk del --purge deps \
-  && rm /var/cache/apk/*
+# Install doctl
+RUN curl -L https://github.com/digitalocean/doctl/releases/download/v1.45.1/doctl-1.45.1-linux-amd64.tar.gz | tar xz
+RUN mv ./doctl /usr/local/bin
